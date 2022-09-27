@@ -43,14 +43,8 @@ public class Course {
         return name;
     }
 
-    public Collection<Module> getModules() {
-        return Collections.unmodifiableCollection(modules.values());
-    }
-
-    public Module getModule(String name){
-        if (!modules.containsKey(name))
-            throw new IllegalArgumentException("No module found with such name!");
-        return modules.get(name);
+    public Map<String, Module> getModules() {
+        return Collections.unmodifiableMap(modules);
     }
 
     public int getActivitiesScore() {
@@ -68,11 +62,14 @@ public class Course {
     public int getSeminarsScore() {
         return seminarsScore;
     }
+
+    public int getFullScore() {
+        return getActivitiesScore() + getExercisesScore() + getHomeworksScore() + getSeminarsScore();
+    }
     //endregion
 
     @Override
     public String toString() {
-        return String.format("%s (Score: %s)", name,
-                             activitiesScore + exercisesScore + homeworksScore + seminarsScore);
+        return String.format("%s (Score: %s)", getName(), getFullScore());
     }
 }

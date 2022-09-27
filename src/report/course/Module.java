@@ -51,28 +51,12 @@ public class Module {
         return name;
     }
 
-    public Collection<Task> getExercises() {
-        return Collections.unmodifiableCollection(exercises.values());
+    public Map<String, Task> getExercises() {
+        return Collections.unmodifiableMap(exercises);
     }
 
-    public Collection<Task> getHomeworks() {
-        return Collections.unmodifiableCollection(homeworks.values());
-    }
-
-    public Collection<Task> getTasks() {
-        return Stream.concat(getExercises().stream(), getHomeworks().stream()).toList();
-    }
-
-    public Task getTask(String name) {
-        var exercise = exercises.getOrDefault(name, null);
-        var homework = homeworks.getOrDefault(name, null);
-        if (exercise == null && homework == null)
-            throw new IllegalArgumentException("No task found with such name!");
-        if (exercise != null && homework != null)
-            throw new IllegalArgumentException("More than one match found!");
-        return exercise == null
-            ? homework
-            : exercise;
+    public Map<String, Task> getHomeworks() {
+        return Collections.unmodifiableMap(homeworks);
     }
 
     public int getActivitiesScore() {
@@ -90,11 +74,14 @@ public class Module {
     public int getSeminarsScore() {
         return seminarsScore;
     }
+
+    public int getFullScore() {
+        return getActivitiesScore() + getExercisesScore() + getHomeworksScore() + getSeminarsScore();
+    }
     //endregion
 
     @Override
     public String toString() {
-        return String.format("%s (Score: %s)", name,
-                             activitiesScore + exercisesScore + homeworksScore + seminarsScore);
+        return String.format("%s (Score: %s)", getName(), getFullScore());
     }
 }
