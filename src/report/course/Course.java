@@ -1,13 +1,10 @@
 package report.course;
 
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Collections;
-import java.util.List;
+import java.util.*;
 
 public class Course {
     private final String name;
-    private final List<Module> modules;
+    private final Map<String, Module> modules;
 
     private int activitiesScore;
     private int exercisesScore;
@@ -16,11 +13,12 @@ public class Course {
 
     public Course(String name) {
         this.name = name;
-        modules = new ArrayList<>();
+        modules = new HashMap<>();
     }
 
+    //region setters
     public void addModule(Module module) {
-        modules.add(module);
+        modules.put(module.getName(), module);
     }
 
     public void setActivitiesScore(int activitiesScore) {
@@ -38,13 +36,21 @@ public class Course {
     public void setSeminarsScore(int seminarsScore) {
         this.seminarsScore = seminarsScore;
     }
+    //endregion
 
+    //region getters
     public String getName() {
         return name;
     }
 
     public Collection<Module> getModules() {
-        return Collections.unmodifiableCollection(modules);
+        return Collections.unmodifiableCollection(modules.values());
+    }
+
+    public Module getModule(String name){
+        if (!modules.containsKey(name))
+            throw new IllegalArgumentException("No module found with such name!");
+        return modules.get(name);
     }
 
     public int getActivitiesScore() {
@@ -62,6 +68,7 @@ public class Course {
     public int getSeminarsScore() {
         return seminarsScore;
     }
+    //endregion
 
     @Override
     public String toString() {

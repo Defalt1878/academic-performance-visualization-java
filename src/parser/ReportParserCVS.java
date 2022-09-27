@@ -2,7 +2,7 @@ package parser;
 
 import report.ReportCard;
 import report.Student;
-import report.StudentAchievements;
+import report.StudentScores;
 
 import java.io.IOException;
 import java.nio.file.Files;
@@ -48,10 +48,10 @@ public class ReportParserCVS {
         return Arrays.stream(line.split(";")).skip(2);
     }
 
-    private StudentAchievements parseAchievements(String line) {
+    private StudentScores parseAchievements(String line) {
         var data = line.split(";");
         var student = new Student(data[0], data[1]);
         var scores = Arrays.stream(data).skip(2).map(Integer::parseInt).toList();
-        return new StudentAchievements(student, ScoreParser.parse(courseName, modules, tasks, scores));
+        return new StudentScores(student, ScoreParser.parse(courseName, modules, tasks, scores));
     }
 }

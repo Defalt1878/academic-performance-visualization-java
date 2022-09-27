@@ -1,15 +1,13 @@
 package report.course;
 
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Collections;
-import java.util.List;
+import java.util.*;
+import java.util.stream.Stream;
 
 public class Module {
     private final String name;
 
-    private final List<Task> exercises;
-    private final List<Task> homeworks;
+    private final Map<String, Task> exercises;
+    private final Map<String, Task> homeworks;
 
     private int activitiesScore;
     private int exercisesScore;
@@ -18,16 +16,17 @@ public class Module {
 
     public Module(String name) {
         this.name = name;
-        exercises = new ArrayList<>();
-        homeworks = new ArrayList<>();
+        exercises = new HashMap<>();
+        homeworks = new HashMap<>();
     }
 
+    //region setters
     public void addExercise(Task exercise) {
-        exercises.add(exercise);
+        exercises.put(exercise.getName(), exercise);
     }
 
     public void addHomework(Task homework) {
-        homeworks.add(homework);
+        homeworks.put(homework.getName(), homework);
     }
 
     public void setActivitiesScore(int activitiesScore) {
@@ -45,17 +44,35 @@ public class Module {
     public void setSeminarsScore(int seminarsScore) {
         this.seminarsScore = seminarsScore;
     }
+    //endregion
 
+    //region getters
     public String getName() {
         return name;
     }
 
     public Collection<Task> getExercises() {
-        return Collections.unmodifiableCollection(exercises);
+        return Collections.unmodifiableCollection(exercises.values());
     }
 
     public Collection<Task> getHomeworks() {
-        return Collections.unmodifiableCollection(homeworks);
+        return Collections.unmodifiableCollection(homeworks.values());
+    }
+
+    public Collection<Task> getTasks() {
+        return Stream.concat(getExercises().stream(), getHomeworks().stream()).toList();
+    }
+
+    public Task getTask(String name) {
+        var exercise = exercises.getOrDefault(name, null);
+        var homework = homeworks.getOrDefault(name, null);
+        if (exercise == null && homework == null)
+            throw new IllegalArgumentException("No task found with such name!");
+        if (exercise != null && homework != null)
+            throw new IllegalArgumentException("More than one match found!");
+        return exercise == null
+            ? homework
+            : exercise;
     }
 
     public int getActivitiesScore() {
@@ -73,6 +90,7 @@ public class Module {
     public int getSeminarsScore() {
         return seminarsScore;
     }
+    //endregion
 
     @Override
     public String toString() {
