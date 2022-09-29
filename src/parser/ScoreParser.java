@@ -12,7 +12,7 @@ public class ScoreParser {
         setCourseScores(course, scores.subList(0, 4));
 
         var module = new Module(modules.get(4));
-        for (var i = 0; i < tasks.size(); i++) {
+        for (var i = 5; i < tasks.size(); i++) {
             if (i >= modules.size() || modules.get(i).isEmpty()) {
                 parseTask(tasks.get(i), scores.get(i), module);
             } else {

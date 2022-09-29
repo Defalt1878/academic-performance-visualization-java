@@ -13,7 +13,7 @@ public class Course {
 
     public Course(String name) {
         this.name = name;
-        modules = new HashMap<>();
+        modules = new LinkedHashMap<>();
     }
 
     //region setters
@@ -43,8 +43,14 @@ public class Course {
         return name;
     }
 
-    public Map<String, Module> getModules() {
-        return Collections.unmodifiableMap(modules);
+    public Collection<Module> getModules() {
+        return Collections.unmodifiableCollection(modules.values());
+    }
+
+    public Module getModule(String moduleName) {
+        if (!modules.containsKey(moduleName))
+            throw new IllegalArgumentException("No module was found with such name!");
+        return modules.get(moduleName);
     }
 
     public int getActivitiesScore() {
@@ -67,6 +73,10 @@ public class Course {
         return getActivitiesScore() + getExercisesScore() + getHomeworksScore() + getSeminarsScore();
     }
     //endregion
+
+    public boolean containsModule(String moduleName) {
+        return modules.containsKey(moduleName);
+    }
 
     @Override
     public String toString() {

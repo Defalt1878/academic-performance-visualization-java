@@ -1,6 +1,10 @@
 package report.course;
 
-import java.util.*;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.LinkedHashMap;
+import java.util.Map;
+import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 public class Module {
@@ -16,8 +20,8 @@ public class Module {
 
     public Module(String name) {
         this.name = name;
-        exercises = new HashMap<>();
-        homeworks = new HashMap<>();
+        exercises = new LinkedHashMap<>();
+        homeworks = new LinkedHashMap<>();
     }
 
     //region setters
@@ -51,12 +55,38 @@ public class Module {
         return name;
     }
 
-    public Map<String, Task> getExercises() {
-        return Collections.unmodifiableMap(exercises);
+    public Collection<Task> getExercises() {
+        return Collections.unmodifiableCollection(exercises.values());
     }
 
-    public Map<String, Task> getHomeworks() {
-        return Collections.unmodifiableMap(homeworks);
+    public Collection<Task> getHomeworks() {
+        return Collections.unmodifiableCollection(homeworks.values());
+    }
+
+    public Collection<Task> getTasks() {
+        return Stream.concat(getExercises().stream(), getHomeworks().stream()).collect(Collectors.toList());
+    }
+
+    public Task getExercise(String exerciseName) {
+        if (!exercises.containsKey(exerciseName))
+            throw new IllegalArgumentException("No exercise was found with such name!");
+        return exercises.get(exerciseName);
+    }
+
+    public Task getHomework(String homeWorkName) {
+        if (!homeworks.containsKey(homeWorkName))
+            throw new IllegalArgumentException("No homework was found with such name!");
+        return homeworks.get(homeWorkName);
+    }
+
+    public Task getTask(String taskName) {
+        var exercise = exercises.getOrDefault(taskName, null);
+        var homework = homeworks.getOrDefault(taskName, null);
+        if (exercise == null && homework == null)
+            throw new IllegalArgumentException("No task was found with such name!");
+        if (exercise != null && homework != null)
+            throw new IllegalArgumentException("More than one match was found!");
+        return exercise == null ? homework : exercise;
     }
 
     public int getActivitiesScore() {
@@ -79,6 +109,14 @@ public class Module {
         return getActivitiesScore() + getExercisesScore() + getHomeworksScore() + getSeminarsScore();
     }
     //endregion
+
+    public boolean containsExercise(String exerciseName) {
+        return exercises.containsKey(exerciseName);
+    }
+
+    public boolean containsHomework(String homeworkName) {
+        return homeworks.containsKey(homeworkName);
+    }
 
     @Override
     public String toString() {

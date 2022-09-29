@@ -1,9 +1,10 @@
 package report;
 
 import report.course.Course;
+import report.course.Module;
 
+import java.util.Collection;
 import java.util.Collections;
-import java.util.Comparator;
 import java.util.List;
 
 public class ReportCard {
@@ -15,51 +16,21 @@ public class ReportCard {
         this.studentsScores = studentsScores;
     }
 
-    public int getStudentScore(String fullName) {
-        return studentsScores.stream()
-            .filter(studentScores -> studentScores.student().getFullName().equals(fullName))
-            .findFirst().orElseThrow(() -> new IllegalArgumentException("Student not found!"))
-            .scores().getFullScore();
+    public Course getMaxScores() {
+        return maxScores;
     }
 
-    public List<Student> getStudentsWithScore(int minInclusive, int maxExclusive) {
+    public Collection<StudentScores> getStudentsScores() {
+        return Collections.unmodifiableCollection(studentsScores);
+    }
+
+    public Collection<Student> getStudents() {
         return studentsScores.stream()
-            .filter(studentScores -> {
-                var fullScore = studentScores.scores().getFullScore();
-                return fullScore >= minInclusive && fullScore < maxExclusive;
-            })
             .map(StudentScores::student)
             .toList();
     }
 
-    public Student getStudentWithMaxScore() {
-        return studentsScores.stream()
-            .max(Comparator.comparing(studentScores -> studentScores.scores().getFullScore()))
-            .orElseThrow().student();
-    }
-
-    public Student getStudentWithModuleMaxScore(String moduleName) {
-        return studentsScores.stream()
-            .max(Comparator.comparing(
-                studentScores -> Scores.getModule(studentScores.scores(), moduleName).getFullScore()
-            ))
-            .orElseThrow().student();
-    }
-
-    public Student getStudentWithTaskMaxScore(String taskName) {
-        return studentsScores.stream()
-            .max(Comparator.comparing(
-                studentScores -> Scores.getTask(studentScores.scores(), taskName).getScore()
-            ))
-            .orElseThrow().student();
-    }
-
-    public List<Student> sortStudentsByScore() {
-        return studentsScores.stream()
-            .sorted(Collections.reverseOrder(
-                Comparator.comparing(studentScores -> studentScores.scores().getFullScore())
-            ))
-            .map(StudentScores::student)
-            .toList();
+    public Collection<String> getModules() {
+        return maxScores.getModules().stream().map(Module::getName).toList();
     }
 }
