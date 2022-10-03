@@ -1,6 +1,7 @@
 package report;
 
 import report.course.Course;
+import report.person.Student;
 
 public record StudentScores(Student student, Course scores) {
 

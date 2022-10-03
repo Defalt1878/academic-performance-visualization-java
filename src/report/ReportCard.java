@@ -2,6 +2,7 @@ package report;
 
 import report.course.Course;
 import report.course.Module;
+import report.person.Student;
 
 import java.util.Collection;
 import java.util.Collections;

@@ -1,4 +1,4 @@
-package report;
+package report.person;
 
 public enum Gender {
     MALE, FEMALE;
