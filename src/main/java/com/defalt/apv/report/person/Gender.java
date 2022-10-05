@@ -1,4 +1,4 @@
-package report.person;
+package com.defalt.apv.report.person;
 
 public enum Gender {
     MALE, FEMALE;

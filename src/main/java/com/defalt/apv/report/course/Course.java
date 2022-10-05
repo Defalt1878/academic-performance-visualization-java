@@ -1,42 +1,29 @@
-package report.course;
+package com.defalt.apv.report.course;
 
 import java.util.*;
 
 public class Course {
     private final String name;
+    private final int activitiesScore;
+    private final int exercisesScore;
+    private final int homeworksScore;
+    private final int seminarsScore;
     private final Map<String, Module> modules;
 
-    private int activitiesScore;
-    private int exercisesScore;
-    private int homeworksScore;
-    private int seminarsScore;
-
-    public Course(String name) {
+    public Course(
+        String name, int activitiesScore, int exercisesScore, int homeworksScore, int seminarsScore,
+        List<Module> modules
+    ) {
         this.name = name;
-        modules = new LinkedHashMap<>();
-    }
-
-    //region setters
-    public void addModule(Module module) {
-        modules.put(module.getName(), module);
-    }
-
-    public void setActivitiesScore(int activitiesScore) {
         this.activitiesScore = activitiesScore;
-    }
-
-    public void setExercisesScore(int exercisesScore) {
         this.exercisesScore = exercisesScore;
-    }
-
-    public void setHomeworksScore(int homeworksScore) {
         this.homeworksScore = homeworksScore;
-    }
-
-    public void setSeminarsScore(int seminarsScore) {
         this.seminarsScore = seminarsScore;
+
+        var modulesMap = new LinkedHashMap<String, Module>();
+        modules.forEach(module -> modulesMap.put(module.getName(), module));
+        this.modules = Collections.unmodifiableMap(modulesMap);
     }
-    //endregion
 
     //region getters
     public String getName() {

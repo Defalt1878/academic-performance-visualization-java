@@ -1,6 +1,6 @@
-package utils.parser;
+package com.defalt.apv.util.parser;
 
-import report.ReportCard;
+import com.defalt.apv.report.ReportCard;
 
 public interface ReportCardParser {
     ReportCard parse(String courseName, String filePath);

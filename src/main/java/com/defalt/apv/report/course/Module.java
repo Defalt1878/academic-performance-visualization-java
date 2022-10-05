@@ -1,9 +1,6 @@
-package report.course;
+package com.defalt.apv.report.course;
 
-import java.util.Collection;
-import java.util.Collections;
-import java.util.LinkedHashMap;
-import java.util.Map;
+import java.util.*;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
@@ -13,42 +10,29 @@ public class Module {
     private final Map<String, Task> exercises;
     private final Map<String, Task> homeworks;
 
-    private int activitiesScore;
-    private int exercisesScore;
-    private int homeworksScore;
-    private int seminarsScore;
+    private final int activitiesScore;
+    private final int exercisesScore;
+    private final int homeworksScore;
+    private final int seminarsScore;
 
-    public Module(String name) {
+    public Module(
+        String name, int activitiesScore, int exercisesScore, int homeworksScore, int seminarsScore,
+        List<Task> exercises, List<Task> homeworks
+    ) {
         this.name = name;
-        exercises = new LinkedHashMap<>();
-        homeworks = new LinkedHashMap<>();
-    }
-
-    //region setters
-    public void addExercise(Task exercise) {
-        exercises.put(exercise.getName(), exercise);
-    }
-
-    public void addHomework(Task homework) {
-        homeworks.put(homework.getName(), homework);
-    }
-
-    public void setActivitiesScore(int activitiesScore) {
         this.activitiesScore = activitiesScore;
-    }
-
-    public void setExercisesScore(int exercisesScore) {
         this.exercisesScore = exercisesScore;
-    }
-
-    public void setHomeworksScore(int homeworksScore) {
         this.homeworksScore = homeworksScore;
-    }
-
-    public void setSeminarsScore(int seminarsScore) {
         this.seminarsScore = seminarsScore;
+
+        var exerciseMap = new LinkedHashMap<String, Task>();
+        exercises.forEach(task -> exerciseMap.put(task.name(), task));
+        this.exercises = Collections.unmodifiableMap(exerciseMap);
+
+        var homeworksMap = new LinkedHashMap<String, Task>();
+        homeworks.forEach(task -> homeworksMap.put(task.name(), task));
+        this.homeworks = Collections.unmodifiableMap(homeworksMap);
     }
-    //endregion
 
     //region getters
     public String getName() {

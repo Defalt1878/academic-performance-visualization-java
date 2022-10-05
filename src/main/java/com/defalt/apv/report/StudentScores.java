@@ -1,7 +1,7 @@
-package report;
+package com.defalt.apv.report;
 
-import report.course.Course;
-import report.person.Student;
+import com.defalt.apv.report.course.Course;
+import com.defalt.apv.report.person.Student;
 
 public record StudentScores(Student student, Course scores) {
 
