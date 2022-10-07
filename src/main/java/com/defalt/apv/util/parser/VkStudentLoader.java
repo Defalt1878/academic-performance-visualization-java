@@ -2,6 +2,8 @@ package com.defalt.apv.util.parser;
 
 import com.defalt.apv.report.person.Gender;
 import com.defalt.apv.report.person.Student;
+import com.google.gson.Gson;
+import com.google.gson.JsonElement;
 import com.vk.api.sdk.client.Lang;
 import com.vk.api.sdk.client.TransportClient;
 import com.vk.api.sdk.client.VkApiClient;
@@ -12,15 +14,14 @@ import com.vk.api.sdk.httpclient.HttpTransportClient;
 import com.vk.api.sdk.objects.base.Sex;
 import com.vk.api.sdk.objects.users.Fields;
 import com.vk.api.sdk.objects.users.UserFull;
+import com.vk.api.sdk.queries.users.UsersSearchQuery;
 
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
-import java.util.Objects;
-import java.util.Optional;
-import java.util.Properties;
-import java.util.stream.Collectors;
+import java.util.*;
+import java.util.stream.StreamSupport;
 
 public class VkStudentLoader implements StudentLoader {
     private static final DateTimeFormatter dateFormatter = DateTimeFormatter.ofPattern("d.M.yyyy");
@@ -51,6 +52,8 @@ public class VkStudentLoader implements StudentLoader {
         return properties;
     }
 
+    private final Gson gson = new Gson();
+    private final Map<Student, Integer> studentsIds = new HashMap<>();
     private final int countryRussiaId = 1;
     private final int cityId;
     private final int universityId;
@@ -88,6 +91,10 @@ public class VkStudentLoader implements StudentLoader {
         return universities.getItems().get(0).getId();
     }
 
+    public Map<Student, Integer> getStudentsIds() {
+        return Collections.unmodifiableMap(studentsIds);
+    }
+
     @Override
     public Student load(String fullName, String groupName) {
         try {
@@ -99,49 +106,40 @@ public class VkStudentLoader implements StudentLoader {
     }
 
     private Student tryLoad(String fullName, String groupName) throws ClientException, ApiException {
-        return tryFindUser(fullName)
-            .map(userFull -> loadStudentFromResponse(fullName, groupName, userFull))
-            .orElseGet(() -> new Student(fullName, groupName));
+        var userFullOptional = tryFindUser(fullName);
+
+        if (userFullOptional.isEmpty())
+            return new Student(fullName, groupName);
+
+        var userFull = userFullOptional.get();
+        var student = loadStudentFromResponse(fullName, groupName, userFull);
+        studentsIds.put(student, userFull.getId());
+        return student;
     }
 
     private Optional<UserFull> tryFindUser(String fullName) throws ClientException, ApiException {
-        var searchResponse = vk.users()
+        var searchResults = vk.execute().batch(
+            userActor,
+            getUserSearchQuery(fullName),
+            getUserSearchQuery(fullName).university(universityId),
+            getUserSearchQuery(fullName).city(cityId)
+        ).execute().getAsJsonArray();
+
+        return StreamSupport.stream(searchResults.spliterator(), false)
+            .map(JsonElement::getAsJsonObject)
+            .filter(searchResponse -> searchResponse.get("count").getAsInt() == 1)
+            .map(searchResponse -> searchResponse.get("items").getAsJsonArray().get(0))
+            .map(userFull -> this.gson.fromJson(userFull.toString(), UserFull.class))
+            .findFirst();
+    }
+
+    private UsersSearchQuery getUserSearchQuery(String fullName) {
+        return vk.users()
             .search(userActor)
             .q(fullName)
-            .fields(Fields.SEX, Fields.BDATE, Fields.HOME_TOWN, Fields.CITY, Fields.UNIVERSITIES)
+            .fields(Fields.SEX, Fields.BDATE, Fields.HOME_TOWN, Fields.CITY)
             .lang(Lang.RU)
-            .count(1000)
-            .execute();
-
-        if (searchResponse.getCount() == 0 || searchResponse.getCount() > 1000)
-            return Optional.empty();
-
-        var results = searchResponse.getItems();
-        if (results.size() == 1)
-            return Optional.of(results.get(0));
-
-        var universityFiltered = results.parallelStream()
-            .filter(userFull -> userFull.getUniversities() != null)
-            .filter(userFull -> userFull.getUniversities().stream()
-                .anyMatch(university -> university.getId() == universityId))
-            .collect(Collectors.toSet());
-        if (universityFiltered.size() == 1)
-            return universityFiltered.stream().findAny();
-
-        var cityFiltered = results.parallelStream()
-            .filter(userFull -> userFull.getCity() != null)
-            .filter(userFull -> userFull.getCity().getId() == cityId)
-            .collect(Collectors.toSet());
-        if (cityFiltered.size() == 1)
-            return cityFiltered.stream().findAny();
-
-        var universityCityFiltered = cityFiltered.parallelStream()
-            .filter(universityFiltered::contains)
-            .collect(Collectors.toSet());
-        if (universityCityFiltered.size() == 1)
-            return universityCityFiltered.stream().findAny();
-
-        return Optional.empty();
+            .count(1);
     }
 
     private static Student loadStudentFromResponse(String fullName, String groupName, UserFull user) {
