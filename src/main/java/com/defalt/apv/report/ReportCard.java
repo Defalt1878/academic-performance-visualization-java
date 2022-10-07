@@ -9,16 +9,16 @@ import java.util.Collections;
 import java.util.List;
 
 public class ReportCard {
-    private final Course maxScores;
+    private final Course course;
     private final List<StudentScores> studentsScores;
 
-    public ReportCard(Course maxScores, List<StudentScores> studentsScores) {
-        this.maxScores = maxScores;
+    public ReportCard(Course course, List<StudentScores> studentsScores) {
+        this.course = course;
         this.studentsScores = studentsScores;
     }
 
-    public Course getMaxScores() {
-        return maxScores;
+    public Course getCourse() {
+        return course;
     }
 
     public Collection<StudentScores> getStudentsScores() {
@@ -32,6 +32,6 @@ public class ReportCard {
     }
 
     public Collection<String> getModules() {
-        return maxScores.getModules().stream().map(Module::getName).toList();
+        return course.getModules().stream().map(Module::getName).toList();
     }
 }

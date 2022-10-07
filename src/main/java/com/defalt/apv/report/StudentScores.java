@@ -1,12 +1,12 @@
 package com.defalt.apv.report;
 
-import com.defalt.apv.report.course.Course;
 import com.defalt.apv.report.person.Student;
+import com.defalt.apv.report.scores.CourseScores;
 
-public record StudentScores(Student student, Course scores) {
+public record StudentScores(Student student, CourseScores scores) {
 
     @Override
     public String toString() {
-        return String.format("%s - %s", student, scores);
+        return String.format("%s - %s", student(), scores());
     }
 }
