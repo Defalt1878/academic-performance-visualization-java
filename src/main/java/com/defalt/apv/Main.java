@@ -1,7 +1,7 @@
 package com.defalt.apv;
 
-import com.defalt.apv.util.parser.VkStudentLoader;
 import com.defalt.apv.util.parser.csvparser.CsvReportParser;
+import com.defalt.apv.util.parser.vkloader.VkStudentLoader;
 import org.apache.commons.lang3.time.StopWatch;
 
 import java.util.concurrent.TimeUnit;
@@ -12,7 +12,7 @@ public class Main {
         var stopwatch = new StopWatch();
 
         stopwatch.start();
-        var vkStudentLoader = new VkStudentLoader("Екатеринбург", "УРФУ");
+        var vkStudentLoader = new VkStudentLoader("RU", "Екатеринбург", "УРФУ");
         var parser = new CsvReportParser(vkStudentLoader);
         var report = parser.parse("C#", path);
         stopwatch.stop();
