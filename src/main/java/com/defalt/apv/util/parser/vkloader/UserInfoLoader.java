@@ -33,7 +33,7 @@ class UserInfoLoader {
         TransportClient transportClient = new HttpTransportClient();
         vk = new VkApiClient(transportClient);
 
-        var userAuthData = VkAuthPropertiesLoader.loadData();
+        var userAuthData = VkAuthDataLoader.loadData();
         userActor = new UserActor(userAuthData.userId(), userAuthData.accessToken());
 
         try {

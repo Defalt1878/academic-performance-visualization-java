@@ -5,7 +5,7 @@ import java.io.IOException;
 import java.util.Objects;
 import java.util.Properties;
 
-class VkAuthPropertiesLoader {
+class VkAuthDataLoader {
     public static UserAuthData loadData() {
         var properties = loadConfigurationProperties();
 
