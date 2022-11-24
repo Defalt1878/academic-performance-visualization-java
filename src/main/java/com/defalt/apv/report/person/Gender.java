@@ -1,13 +1,19 @@
 package com.defalt.apv.report.person;
 
 public enum Gender {
-    MALE, FEMALE;
+    MALE("MALE"),
+    FEMALE("FEMALE");
 
-    public static Gender fromString(String gender) {
-        return switch (gender.toLowerCase()) {
-            case "male" -> MALE;
-            case "female" -> FEMALE;
-            default -> throw new IllegalArgumentException("Unknown gender!");
+    public final String Label;
+    Gender(String label) {
+        this.Label = label;
+    }
+
+    public static Gender FromString(String value) {
+        return switch (value.toUpperCase()) {
+            case "MALE" -> MALE;
+            case "FEMALE" -> FEMALE;
+            default -> throw new IllegalArgumentException("Unknown value");
         };
     }
 }

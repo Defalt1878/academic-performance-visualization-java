@@ -1,11 +1,14 @@
 package com.defalt.apv.report.course;
 
+import com.defalt.apv.report.Identifiable;
+
+import javax.naming.OperationNotSupportedException;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
 import java.util.Objects;
 
-public class Module {
+public class Module extends Identifiable {
     private final String name;
 
     private final Collection<Task> tasks;
@@ -30,6 +33,7 @@ public class Module {
     }
 
     //region getters
+
     public String getName() {
         return name;
     }

@@ -1,5 +1,6 @@
 package com.defalt.apv.report.scores;
 
+import com.defalt.apv.report.Identifiable;
 import com.defalt.apv.report.course.Course;
 
 import java.util.Collection;

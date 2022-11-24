@@ -1,11 +1,13 @@
 package com.defalt.apv.report.course;
 
+import com.defalt.apv.report.Identifiable;
+
 import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
 import java.util.Objects;
 
-public class Course {
+public class Course extends Identifiable {
     private final String name;
     private final int activitiesMaxScore;
     private final int exercisesMaxScore;
@@ -17,7 +19,6 @@ public class Course {
         String name, int activitiesMaxScore, int exercisesMaxScore,
         int homeworksMaxScore, int seminarsMaxScore, List<Module> modules
     ) {
-
         this.name = Objects.requireNonNull(name, "Name cannot be null!");
         this.modules =
             Collections.unmodifiableCollection(Objects.requireNonNull(modules, "Modules list cannot be null!"));
@@ -29,6 +30,7 @@ public class Course {
     }
 
     //region getters
+
     public String getName() {
         return name;
     }

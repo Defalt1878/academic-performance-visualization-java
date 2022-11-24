@@ -1,8 +1,10 @@
 package com.defalt.apv.report.course;
 
+import com.defalt.apv.report.Identifiable;
+
 import java.util.Objects;
 
-public final class Task {
+public final class Task extends Identifiable {
     private final String name;
     private final TaskType type;
     private final int maxScore;
@@ -16,6 +18,7 @@ public final class Task {
     }
 
     //region getters
+
     public String getName() {
         return name;
     }
