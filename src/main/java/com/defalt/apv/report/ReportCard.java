@@ -21,17 +21,17 @@ public class ReportCard {
         return course;
     }
 
-    public Collection<StudentScores> getStudentsScores() {
-        return Collections.unmodifiableCollection(studentsScores);
+    public List<StudentScores> getStudentsScores() {
+        return Collections.unmodifiableList(studentsScores);
     }
 
-    public Collection<Student> getStudents() {
+    public List<Student> getStudents() {
         return studentsScores.stream()
             .map(StudentScores::student)
             .toList();
     }
 
-    public Collection<String> getModules() {
+    public List<String> getModules() {
         return course.getModules().stream().map(Module::getName).toList();
     }
 }

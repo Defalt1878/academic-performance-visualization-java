@@ -1,39 +1,61 @@
 package com.defalt.apv;
 
+import com.defalt.apv.charts.ReportChartBuilder;
+import com.defalt.apv.report.ReportCard;
 import com.defalt.apv.report.StudentScores;
-import com.defalt.apv.report.person.Student;
 import com.defalt.apv.util.parser.csvparser.CsvReportParser;
 import com.defalt.apv.util.parser.vkloader.VkStudentLoader;
 import com.defalt.apv.util.storage.ReportStorage;
 import com.defalt.apv.util.storage.sqlite.SQLiteStorage;
-import org.apache.commons.lang3.time.StopWatch;
 
 import java.sql.SQLException;
-import java.util.concurrent.TimeUnit;
-import java.util.stream.Collectors;
+
 
 public class Main {
     public static void main(String[] args) {
-        var path = "src/main/resources/basicprogramming_2.csv";
-        var stopwatch = new StopWatch();
+        var report = getReport();
+        var chartBuilder = new ReportChartBuilder(1000, "charts", true);
+        chartBuilder.createChartsFor(report);
+    }
 
-        stopwatch.start();
-//        var vkStudentLoader = new VkStudentLoader("RU", "Екатеринбург", "УРФУ");
-//        var parser = new CsvReportParser(vkStudentLoader);
-//        var report = parser.parse("C#", path);
+    private static ReportCard getReport() {
+        var reportCard = loadReportFromStorage();
+        if (reportCard == null) {
+            reportCard = parseReport();
+            clearStorageAndSaveCard(reportCard);
+        }
+        return reportCard;
+    }
+
+    private static ReportCard loadReportFromStorage() {
         try (ReportStorage storage = new SQLiteStorage()) {
-//            storage.clearAll();
-//            storage.saveReportCard(report);
             var course = storage.getCourse("C#");
-            var firstStudent = storage.getStudents().get(0);
-            var scores = storage.getCourseScores(firstStudent, course);
-            var studentScores = new StudentScores(firstStudent, scores);
-            System.out.println(studentScores);
+            if (course == null)
+                return null;
+
+            var students = storage.getStudents();
+            var scores = students.stream()
+                .map(student -> new StudentScores(student, storage.getCourseScores(student, course)))
+                .toList();
+
+            return new ReportCard(course, scores);
         } catch (SQLException e) {
             throw new RuntimeException(e);
         }
-        stopwatch.stop();
+    }
 
-        System.out.printf("Time: %s seconds%n%n", stopwatch.getTime(TimeUnit.SECONDS));
+    private static ReportCard parseReport() {
+        var studentLoader = new VkStudentLoader("RU", "Екатеринбург", "УРФУ");
+        var parser = new CsvReportParser(studentLoader);
+        return parser.parse("C#", "src/main/resources/basicprogramming_3.csv");
+    }
+
+    private static void clearStorageAndSaveCard(ReportCard reportCard) {
+        try (ReportStorage storage = new SQLiteStorage()) {
+            storage.clearAll();
+            storage.saveReportCard(reportCard);
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
     }
 }

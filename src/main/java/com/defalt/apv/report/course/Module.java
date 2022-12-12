@@ -2,8 +2,6 @@ package com.defalt.apv.report.course;
 
 import com.defalt.apv.report.Identifiable;
 
-import javax.naming.OperationNotSupportedException;
-import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
 import java.util.Objects;
@@ -11,7 +9,7 @@ import java.util.Objects;
 public class Module extends Identifiable {
     private final String name;
 
-    private final Collection<Task> tasks;
+    private final List<Task> tasks;
 
     private final int activitiesMaxScore;
     private final int exercisesMaxScore;
@@ -24,7 +22,7 @@ public class Module extends Identifiable {
     ) {
         this.name = Objects.requireNonNull(name, "Name cannot be null!");
         this.tasks =
-            Collections.unmodifiableCollection(Objects.requireNonNull(tasks, "Tasks list cannot be null!"));
+            Collections.unmodifiableList(Objects.requireNonNull(tasks, "Tasks list cannot be null!"));
 
         this.activitiesMaxScore = checkNotNegative(activitiesMaxScore);
         this.exercisesMaxScore = checkNotNegative(exercisesMaxScore);
@@ -38,15 +36,15 @@ public class Module extends Identifiable {
         return name;
     }
 
-    public Collection<Task> getExercises() {
+    public List<Task> getExercises() {
         return tasks.stream().filter(task -> task.getType() == TaskType.EXERCISE).toList();
     }
 
-    public Collection<Task> getHomeworks() {
+    public List<Task> getHomeworks() {
         return tasks.stream().filter(task -> task.getType() == TaskType.HOMEWORK).toList();
     }
 
-    public Collection<Task> getTasks() {
+    public List<Task> getTasks() {
         return tasks;
     }
 

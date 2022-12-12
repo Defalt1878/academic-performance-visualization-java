@@ -161,7 +161,7 @@ public class SQLiteStorage implements ReportStorage {
             var result = executeSelectQuery(SQLiteSelectQueries.SELECT_COURSE, name)
         ) {
             if (result == null || !result.next())
-                throw new IllegalArgumentException("No course found with such name!");
+                return null;
 
             var course = new Course(
                 name,
@@ -185,7 +185,7 @@ public class SQLiteStorage implements ReportStorage {
             var result = executeSelectQuery(SQLiteSelectQueries.SELECT_MODULES, courseId)
         ) {
             if (result == null)
-                throw new IllegalArgumentException("No modules found!");
+                return null;
             while (result.next()) {
                 var module = new Module(
                     result.getString("name"),
@@ -210,7 +210,7 @@ public class SQLiteStorage implements ReportStorage {
             var result = executeSelectQuery(SQLiteSelectQueries.SELECT_TASKS, moduleId)
         ) {
             if (result == null)
-                throw new IllegalArgumentException("No tasks found!");
+                return null;
             while (result.next()) {
                 var task = new Task(
                     result.getString("name"),

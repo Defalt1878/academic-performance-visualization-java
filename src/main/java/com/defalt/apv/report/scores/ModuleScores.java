@@ -1,14 +1,13 @@
 package com.defalt.apv.report.scores;
 
-import com.defalt.apv.report.Identifiable;
 import com.defalt.apv.report.course.Module;
 
-import java.util.Collection;
+import java.util.List;
 
 public class ModuleScores {
     private final Module module;
 
-    private final Collection<TaskScores> tasksScores;
+    private final List<TaskScores> tasksScores;
     private int activitiesScore;
     private int exercisesScore;
     private int homeworksScore;
@@ -23,7 +22,7 @@ public class ModuleScores {
         return module;
     }
 
-    public Collection<TaskScores> getTasksScores() {
+    public List<TaskScores> getTasksScores() {
         return tasksScores;
     }
 
@@ -58,6 +57,12 @@ public class ModuleScores {
 
     public int getFullScore() {
         return getActivitiesScore() + getExercisesScore() + getHomeworksScore() + getSeminarsScore();
+    }
+
+    public double getResultScore() {
+        var current = getExercisesScore() + getHomeworksScore();
+        var max = module.getExercisesMaxScore() + module.getHomeworksMaxScore();
+        return 100d * current / max;
     }
     //endregion
 

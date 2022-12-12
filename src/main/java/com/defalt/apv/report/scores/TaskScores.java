@@ -19,6 +19,10 @@ public class TaskScores {
         return score;
     }
 
+    public double getResultScore() {
+        return 100d * getScore() / task.getMaxScores();
+    }
+
     public void setScore(int value) {
         if (value < 0)
             throw new IllegalArgumentException("Value cannot be less than zero!");

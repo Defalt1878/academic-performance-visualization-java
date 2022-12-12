@@ -2,7 +2,6 @@ package com.defalt.apv.report.course;
 
 import com.defalt.apv.report.Identifiable;
 
-import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
 import java.util.Objects;
@@ -13,7 +12,7 @@ public class Course extends Identifiable {
     private final int exercisesMaxScore;
     private final int homeworksMaxScore;
     private final int seminarsMaxScore;
-    private final Collection<Module> modules;
+    private final List<Module> modules;
 
     public Course(
         String name, int activitiesMaxScore, int exercisesMaxScore,
@@ -21,7 +20,7 @@ public class Course extends Identifiable {
     ) {
         this.name = Objects.requireNonNull(name, "Name cannot be null!");
         this.modules =
-            Collections.unmodifiableCollection(Objects.requireNonNull(modules, "Modules list cannot be null!"));
+            Collections.unmodifiableList(Objects.requireNonNull(modules, "Modules list cannot be null!"));
 
         this.activitiesMaxScore = checkNotNegative(activitiesMaxScore);
         this.exercisesMaxScore = checkNotNegative(exercisesMaxScore);
@@ -35,7 +34,7 @@ public class Course extends Identifiable {
         return name;
     }
 
-    public Collection<Module> getModules() {
+    public List<Module> getModules() {
         return modules;
     }
 
